@@ -2,9 +2,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import mpl_toolkits.axisartist as AA
 from matplotlib.ticker import MultipleLocator
+from numpy import linalg
 
-phi_1 = lambda y: (np.sin(y) - 1) / 2
-phi_2 = lambda x: np.cos(x + 0.5) - 2
+
+EPS = 1e-5
+phi_1 = lambda x: (np.sin(x[1]) - 1) / 2
+phi_2 = lambda x: np.cos(x[0] + 0.5) - 2
+
+func_tup = (phi_1, phi_2)
+x_0 = np.array([-1, -1])
 
 
 def paint_plot(a, b):
@@ -30,4 +36,24 @@ def paint_plot(a, b):
     plt.show()
 
 
-paint_plot(-5, 5)
+def fixed_point_iteration(x_k0, func_tup, eps):
+    """Realization of method Fixed point iteration"""
+    i = 0
+    print(f"{'iteration':^11s}" + ' ' * 5 + 'x' + ' ' * 9 + 'y' + ' ' * 8 + "delta")
+    print(f"{i:^11d} {x_k0[0]:^7.6f} {x_k0[1]:^7.6f}")
+    while True:
+        x_k1 = np.array([func_tup[i](x_k0) for i in range(x_k0.size)])
+        i += 1
+        print(f"{i:^11d} {x_k1[0]:^7.6f} {x_k1[1]:^7.6f}  {linalg.norm(x_k0 - x_k1, np.inf):7.6f}")
+        if linalg.norm(x_k0 - x_k1, np.inf) <= eps:
+            return x_k1
+        x_k0 = np.copy(x_k1)
+
+
+solution1 = fixed_point_iteration(x_0, func_tup, EPS)
+print('solution: ', *solution1.round(5))
+
+solution2 = fixed_point_iteration((np.random.rand(1, 2)*100).reshape(-1), func_tup, EPS)
+print('solution: ', *solution2.round(5))
+
+
