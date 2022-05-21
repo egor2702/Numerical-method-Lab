@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import mpl_toolkits.axisartist as AA
 from matplotlib.ticker import MultipleLocator
 from numpy import linalg
+from scipy.optimize import fsolve
 
 
 EPS = 1e-5
@@ -50,10 +51,18 @@ def fixed_point_iteration(x_k0, func_tup, eps):
         x_k0 = np.copy(x_k1)
 
 
+def func(x):
+    """Return value of vector function F(x) from nonlinear system F(x)=0"""
+    return [np.cos(x[0]+0.5)-x[1]-2, np.sin(x[1])-2*x[0]-1]
+
+
 solution1 = fixed_point_iteration(x_0, func_tup, EPS)
 print('solution: ', *solution1.round(5))
 
 solution2 = fixed_point_iteration((np.random.rand(1, 2)*100).reshape(-1), func_tup, EPS)
 print('solution: ', *solution2.round(5))
+
+root = fsolve(func,x_0)
+print('solution from library function fsolve', *root.round(5))
 
 
