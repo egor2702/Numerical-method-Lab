@@ -124,6 +124,14 @@ def newton_method(x_k0, w_mat, f_vect, eps):
 
 paint_plot_2()
 first_approximate = ((0, 0.7), (0, -0.7), (0.6, 0.6), (-0.6, -0.6))
+# Solve with first approximation (0, 0.7), (0, -0.7), (0.6, 0.6), (-0.6, -0.6)
 for i in range(4):
-    solution = newton_method(first_approximate[i], yakobi_mat, func_1, EPS).round(5)
-    print(f"solution: x = {solution[0]}  y = {solution[1]}\n")
+    solution = newton_method(np.array(first_approximate[i]), yakobi_mat, func_1, EPS).round(5)
+    print(f"solution: x = {solution[0]}  y = {solution[1]}")
+    print(f"F(x_*) = {func_1(solution)}\n")
+# Solve with random first approximation
+print("Solution: ", newton_method((np.random.rand(1, 2)*100).reshape(-1), yakobi_mat, func_1, EPS).round(5))
+# Use function from scipy.optimize for solving equation
+for i in range(4):
+    root = fsolve(func_1, first_approximate[i])
+    print('solution from library function fsolve: ', *root.round(5))
