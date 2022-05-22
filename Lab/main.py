@@ -55,16 +55,16 @@ def func(x):
     return [np.cos(x[0] + 0.5) - x[1] - 2, np.sin(x[1]) - 2 * x[0] - 1]
 
 
-# paint_plot_1(-6, 6)
-# # Solve with first approximate (-1,-1)
-# solution1 = fixed_point_iteration(x_0, func_tup, EPS)
-# print('solution: ', *solution1.round(5))
-# # Solve with random first approximate
-# solution2 = fixed_point_iteration((np.random.rand(1, 2) * 100).reshape(-1), func_tup, EPS)
-# print('solution: ', *solution2.round(5))
-# # Use function from scipy.optimize for solving equation
-# root = fsolve(func, x_0)
-# print('solution from library function fsolve', *root.round(5))
+paint_plot_1(-6, 6)
+# Solve with first approximate (-1,-1)
+solution1 = fixed_point_iteration(x_0, func_tup, EPS)
+print('solution: ', *solution1.round(5))
+# Solve with random first approximate
+solution2 = fixed_point_iteration((np.random.rand(1, 2) * 100).reshape(-1), func_tup, EPS)
+print('solution: ', *solution2.round(5))
+# Use function from scipy.optimize for solving equation
+root = fsolve(func, x_0)
+print('solution from library function fsolve', *root.round(5))
 
 
 def paint_plot_2():
@@ -122,7 +122,7 @@ def newton_method(x_k0, w_mat, f_vect, eps):
         x_k0 = x_k1
 
 
-# paint_plot_2()
+paint_plot_2()
 first_approximate = ((0, 0.7), (0, -0.7), (0.6, 0.6), (-0.6, -0.6))
 # Solve with first approximation (0, 0.7), (0, -0.7), (0.6, 0.6), (-0.6, -0.6)
 for i in range(4):
