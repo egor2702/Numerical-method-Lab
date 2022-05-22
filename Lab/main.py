@@ -5,7 +5,6 @@ from matplotlib.ticker import MultipleLocator
 from numpy import linalg
 from scipy.optimize import fsolve
 
-
 EPS = 1e-5
 phi_1 = lambda x: (np.sin(x[1]) - 1) / 2
 phi_2 = lambda x: np.cos(x[0] + 0.5) - 2
@@ -14,7 +13,7 @@ func_tup = (phi_1, phi_2)
 x_0 = np.array([-1, -1])
 
 
-def paint_plot(a, b):
+def paint_plot_1(a, b):
     """Create plot with two functions"""
     y1 = np.arange(a, b, 0.1)
     x1 = (np.sin(y1) - 1) / 2
@@ -22,11 +21,11 @@ def paint_plot(a, b):
     y2 = np.cos(x2 + 0.5) - 2
     fig = plt.figure(figsize=(10, 10))
     ax = fig.add_subplot(axes_class=AA.Axes)
-    ax.axis["right"].set_visible(False)
+    ax.axis["right"].set_visible(False)  # hide right axis
     ax.axis["left"].set_visible(False)
     ax.axis["top"].set_visible(False)
     ax.axis["bottom"].set_visible(False)
-    ax.axis["y=0"] = ax.new_floating_axis(nth_coord=0, value=0)
+    ax.axis["y=0"] = ax.new_floating_axis(nth_coord=0, value=0)  # Add new axis which will be centred
     ax.axis["x=0"] = ax.new_floating_axis(nth_coord=1, value=0)
     ax.set(xlim=(-6, 6), ylim=(-6, 6))
     graph1 = plt.plot(x1, y1, linewidth=3, color=(0, 0, 1))
@@ -52,17 +51,45 @@ def fixed_point_iteration(x_k0, func_tup, eps):
 
 
 def func(x):
-    """Return value of vector function F(x) from nonlinear system F(x)=0"""
-    return [np.cos(x[0]+0.5)-x[1]-2, np.sin(x[1])-2*x[0]-1]
+    """Take (x, y) vector and return vector (cos(x + 0.5) - y - 2; sin(y) - 2x - 1)"""
+    return [np.cos(x[0] + 0.5) - x[1] - 2, np.sin(x[1]) - 2 * x[0] - 1]
 
 
+paint_plot_1(-6, 6)
+# Solve with first approximate (-1,-1)
 solution1 = fixed_point_iteration(x_0, func_tup, EPS)
 print('solution: ', *solution1.round(5))
-
-solution2 = fixed_point_iteration((np.random.rand(1, 2)*100).reshape(-1), func_tup, EPS)
+# Solve with random first approximate
+solution2 = fixed_point_iteration((np.random.rand(1, 2) * 100).reshape(-1), func_tup, EPS)
 print('solution: ', *solution2.round(5))
-
-root = fsolve(func,x_0)
+# Use function from scipy.optimize for solving equation
+root = fsolve(func, x_0)
 print('solution from library function fsolve', *root.round(5))
 
 
+def paint_plot_2():
+    """Create plot with two functions"""
+    x1 = np.arange(-2, 2, 0.01)
+    y1 = np.arctan(np.power(x1, 2)) / x1
+    x2 = np.zeros([1, 3], dtype=np.int16).reshape(-1)
+    y2 = np.linspace(-3, 3, 3)
+    x3 = np.linspace(-1/(0.7**0.5), 1/(0.7**0.5), 200)
+    y3 = np.power((1 - 0.7 * np.power(x3, 2))/ 2, 0.5)
+    fig = plt.figure(figsize=(10, 10))
+    ax = fig.add_subplot(axes_class=AA.Axes)
+    ax.axis["right"].set_visible(False)  # hide right axis
+    ax.axis["left"].set_visible(False)
+    ax.axis["top"].set_visible(False)
+    ax.axis["bottom"].set_visible(False)
+    ax.axis["y=0"] = ax.new_floating_axis(nth_coord=0, value=0)  # Add new axis which will be centred
+    ax.axis["x=0"] = ax.new_floating_axis(nth_coord=1, value=0)
+    ax.set(xlim=(-2, 2), ylim=(-2, 2))
+    plt.plot(x1, y1, x2, y2, linewidth=3, color=(0, 0, 1))
+    plt.plot(x3, y3, x3, -y3, linewidth=3, color=(252 / 256, 227 / 256, 0))
+    ax.grid()
+    ax.xaxis.set_major_locator(MultipleLocator(0.2))
+    ax.yaxis.set_major_locator(MultipleLocator(0.2))
+    plt.show()
+
+
+paint_plot_2()
