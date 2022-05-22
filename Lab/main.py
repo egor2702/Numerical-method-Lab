@@ -73,8 +73,8 @@ def paint_plot_2():
     y1 = np.arctan(np.power(x1, 2)) / x1
     x2 = np.zeros([1, 3], dtype=np.int16).reshape(-1)
     y2 = np.linspace(-3, 3, 3)
-    x3 = np.linspace(-1/(0.7**0.5), 1/(0.7**0.5), 200)
-    y3 = np.power((1 - 0.7 * np.power(x3, 2))/ 2, 0.5)
+    x3 = np.linspace(-1 / (0.7 ** 0.5), 1 / (0.7 ** 0.5), 200)
+    y3 = np.power((1 - 0.7 * np.power(x3, 2)) / 2, 0.5)
     fig = plt.figure(figsize=(10, 10))
     ax = fig.add_subplot(axes_class=AA.Axes)
     ax.axis["right"].set_visible(False)  # hide right axis
@@ -92,4 +92,38 @@ def paint_plot_2():
     plt.show()
 
 
+def func_1(x_vect):
+    """"Take vector (x,y) and return (tan(xy) - x^2; 0.7x^2 + 2y^2 - 1)"""
+    x = np.tan(x_vect[0] * x_vect[1]) - x_vect[0] ** 2
+    y = 0.7 * x_vect[0] ** 2 + 2 * x_vect[1] ** 2 - 1
+    return np.array([x, y])
+
+
+def yakobi_mat(x_vect):
+    """Take vector (x, y) and return matrix of coefficient W """
+    a11 = x_vect[1] / (np.cos(x_vect[0] * x_vect[1]) ** 2) - 2 * x_vect[0]
+    a12 = x_vect[0] / (np.cos(x_vect[0] * x_vect[1]) ** 2)
+    a21 = 1.4 * x_vect[0]
+    a22 = 4 * x_vect[1]
+    return np.array([[a11, a12], [a21, a22]])
+
+
+def newton_method(x_k0, w_mat, f_vect, eps):
+    i = 0
+    print(f"{'iteration':^11s}" + ' ' * 5 + 'x' + ' ' * 9 + 'y' + ' ' * 8 + "delta")
+    print(f"{i:^11d} {x_k0[0]:^9.6f} {x_k0[1]:^9.6f}")
+    while True:
+        d_x = np.linalg.solve(w_mat(x_k0), -f_vect(x_k0))
+        x_k1 = x_k0 + d_x
+        print(f"{i:^11d} {x_k1[0]:^9.6f} {x_k1[1]:^9.6f}  {linalg.norm(x_k0 - x_k1, np.inf):8.6f}")
+        if np.linalg.norm(x_k1 - x_k0, np.inf) < eps:
+            return x_k1
+        i += 1
+        x_k0 = x_k1
+
+
 paint_plot_2()
+first_approximate = ((0, 0.7), (0, -0.7), (0.6, 0.6), (-0.6, -0.6))
+for i in range(4):
+    solution = newton_method(first_approximate[i], yakobi_mat, func_1, EPS).round(5)
+    print(f"solution: x = {solution[0]}  y = {solution[1]}\n")
